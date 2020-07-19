@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      #list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+      #list li {
+        margin: 10px;
+        border: 1px solid black;
+        background-color: lightgrey;
+        padding: 12px;
+        text-decoration: none;
+        font-size: 18px;
+        color: black;
+        display: block;
+        position: relative;
+      }
+      #list li:hover {
+        background-color: #eee;
+      }
+      .close {
+        cursor: pointer;
+        float: right;
+      }
+      .close:hover {
+        background: #bbb;
+        border-radius: 50%;
+      }
+      .remove-task {
+        text-decoration: line-through;
+      }
+      #input-div {
+        text-align: center;
+      }
+      #input {
+        border: 1px solid black;
+        margin-bottom: 20px;
+        width: 300px;
+        height: 50px;
+      }
+      #add-button-div {
+        text-align: center;
+      }
+      #add-button {
+        cursor: pointer;
+        width: 150px;
+        padding: 10px;
+        background-color: green;
+        font-size: larger;
+      }
+      #add-task-div {
+        background-color: goldenrod;
+        border: 1px dashed black;
+        padding: 20px;
+        margin: 0px;
+      }
+      #delete-button {
+        cursor: pointer;
+        padding: 10px;
+        background-color: red;
+        width: 150px;
+        font-size: large;
+        margin: 10px;
+      }
+      #delete-button-div {
+        text-align: center;
+      }
+      #list {
+        width: 50%;
+        margin: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="add-task-div">
+      <div id="input-div">
+        <input
+          id="input"
+          placeholder="Add a task..."
+          type="text"
+          id="input"
+          required
+        />
+      </div>
+      <div id="add-button-div">
+        <button id="add-button">Add Task</button>
+      </div>
+    </div>
+    <ul id="list"></ul>
+    <ul id="completed-tasks"></ul>
+    <div id="delete-button-div">
+      <button id="delete-button">Remove Tasks</button>
+    </div>
+    <div id="remaining-tasks-div">
+      <button id="remaining-tasks">Remaining tasks</button>
+    </div>
+    <div id="completed-task-div">
+      <button id="completed-button">Completed Tasks</button>
+    </div>
+    <h3>Total tasks left:<span id="task-counter"></span></h3>
+  </body>
+  <script>
+    let button = document.getElementById("add-button");
+    button.addEventListener("click", function () {
+      let input_element = document.getElementById("input").value;
+      if (input_element === "") {
+        alert("The input field should not be empty");
+        return;
+      }
+      document.getElementById("input").value = "";
+      let list = document.getElementById("list");
+      let listItem = document.createElement("li");
+      listItem.appendChild(document.createTextNode(input_element));
+      let span = document.createElement("SPAN");
+      let text = document.createTextNode("\u00D7");
+      span.className = "close";
+      span.appendChild(text);
+      listItem.appendChild(span);
+      list.appendChild(listItem);
+
+      let closeElements = document.getElementsByClassName("close");
+      for (let i = 0; i < closeElements.length; i++) {
+        closeElements[i].onclick = function () {
+          let div = this.parentElement;
+          if (div.classList.contains("remove-task")) {
+            div.classList.remove("remove-task");
+            div.style.textDecoration = "none";
+            div.style.backgroundColor = "lightGrey";
+          } else {
+            div.classList.add("remove-task");
+            div.style.textDecoration = "line-through";
+            div.style.backgroundColor = "darkGrey";
+            div.classList.add("completed");
+          }
+        };
+      }
+      updateTotalTasks();
+    });
+
+    let removeListItems = document.getElementsByClassName("remove-task");
+    let delete_button = document.getElementById("delete-button");
+    delete_button.addEventListener("click", function () {
+      for (let i = 0; i < removeListItems.length; i++) {
+        removeListItems[i].style.display = "none";
+      }
+      updateTotalTasks();
+    });
+
+    function updateTotalTasks() {
+      let totalListItems = document.getElementsByTagName("li");
+      document.getElementById("task-counter").innerText =
+        totalListItems.length - removeListItems.length;
+    }
+
+    let completed_button = document.getElementById("completed-button");
+    completed_button.addEventListener("click", function () {
+      let list = document.getElementById("list");
+      list.style.display = "none";
+      let completedList = document.getElementById("completed-tasks");
+      completedList.removeAttribute("style");
+      let listItems = document.getElementsByClassName("completed");
+      console.log(listItems);
+      for (let i = 0; i < listItems.length; i++) {
+        completedList.appendChild(listItems[i]);
+        listItems[i].removeAttribute("style");
+        listItems[i].style.textDecoration = "none";
+        if (
+          listItems[i].childNodes[1] !== null &&
+          listItems[i].childNodes[1] !== undefined
+        ) {
+          let childElement = listItems[i].childNodes[1];
+          listItems[i].removeChild(childElement);
+        }
+      }
+    });
+    let reamining_task_button = document.getElementById("remaining-tasks");
+    reamining_task_button.addEventListener("click", function () {
+      console.log("remaining button");
+      let list = document.getElementById("list");
+      list.removeAttribute("style");
+      let completedList = document.getElementById("completed-tasks");
+      completedList.style.display = "none";
+    });
+  </script>
+</html>
